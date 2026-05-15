@@ -1,0 +1,2 @@
+# Cloudflare Pages SPA routing
+/p/*    /view.html    200

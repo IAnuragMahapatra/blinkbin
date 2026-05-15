@@ -1,0 +1,14 @@
+{
+  "name": "blinkbin-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BlinkBin frontend — vanilla JS, no framework",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "npx serve . -p 3000 --no-clipboard"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.0",
+    "serve": "^14.0.0"
+  }
+}
