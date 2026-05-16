@@ -1,7 +1,13 @@
 import time
-import uuid
+import secrets
 import logging
 from fastapi import APIRouter, HTTPException, Response
+
+ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+
+def generate_id():
+    return "".join(secrets.choice(ALPHABET) for _ in range(8))
+
 from app.models import (
     CreatePasteRequest, CreatePasteResponse,
     ReadPasteResponse, LockedResponse,
@@ -17,7 +23,7 @@ log = logging.getLogger(__name__)
 @router.post("/paste", response_model=CreatePasteResponse, status_code=201)
 async def create_paste(req: CreatePasteRequest):
     now = int(time.time())
-    paste_id = str(uuid.uuid4())
+    paste_id = generate_id()
 
     # Dead Drop: hard cap starts from unlock date, not creation date
     if req.unlock_at_unix:
