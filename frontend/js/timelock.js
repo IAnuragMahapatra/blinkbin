@@ -19,30 +19,33 @@ export function roundToUnix(roundId) {
 // plaintext: Uint8Array — the AES key bytes (or wrapped key bytes)
 // returns: Uint8Array of IBE ciphertext
 export async function ibeEncrypt(plaintext, roundId) {
-  const { timelockEncrypt } = window.tlock;
-  const locked = await timelockEncrypt(
-    plaintext,
-    roundId,
-    { chainHash: DRAND_CHAIN },
-  );
-  return locked;
+  const { timelockEncrypt, quicknetClient, Buffer } = window.tlock;
+  const client = quicknetClient();
+  // timelockEncrypt(roundNumber, payload: Buffer/Uint8Array, chainClient)
+  // returns base64 string or encrypted payload format. Wait, tlock-js returns string!
+  // Let's await it and encode if needed.
+  const lockedStr = await timelockEncrypt(roundId, Buffer.from(plaintext), client);
+  // Actually, tlock-js timelockEncrypt returns string (which is the age-encrypted payload).
+  // We need to store it as bytes or base64. Let's just return the bytes of the string.
+  return new TextEncoder().encode(lockedStr);
 }
 
-// ─── IBE decrypt ─────────────────────────────────────────
+//IBE decrypt
 // fetches drand round output, then IBE-decrypts
 // returns: Uint8Array
 export async function ibeDecrypt(lockedBytes, roundId) {
-  const { timelockDecrypt } = window.tlock;
-  const roundOutput = await fetchDrandRound(roundId);
-  return timelockDecrypt(lockedBytes, roundOutput);
+  const { timelockDecrypt, quicknetClient } = window.tlock;
+  const client = quicknetClient();
+  const lockedStr = new TextDecoder().decode(lockedBytes);
+  const decryptedBuf = await timelockDecrypt(lockedStr, client);
+  return new Uint8Array(decryptedBuf);
 }
 
 // ─── Fetch drand round output ─────────────────────────────
 export async function fetchDrandRound(roundId) {
-  const res = await fetch(`${DRAND_API}/public/${roundId}`);
-  if (!res.ok) throw new Error(`drand fetch failed: ${res.status}`);
-  const json = await res.json();
-  return json; // tlock-js expects the full response object
+  const { quicknetClient } = window.tlock;
+  const client = quicknetClient();
+  return client.get(roundId);
 }
 
 // ─── Availability check ───────────────────────────────────

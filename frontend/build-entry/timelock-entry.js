@@ -1,4 +1,4 @@
-// entry point for esbuild — re-exports tlock-js and drand-client
+// entry point for esbuild, re-exports tlock-js and drand-client
 // run: npm install tlock-js drand-client first
-export { timelockEncrypt, timelockDecrypt } from "tlock-js";
-export { fetchBeacon, HttpChainClient } from "drand-client";
+export { timelockEncrypt, timelockDecrypt, Buffer } from "tlock-js";
+export { fetchBeacon, HttpChainClient, quicknetClient } from "drand-client";
