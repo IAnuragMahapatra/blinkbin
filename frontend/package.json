@@ -10,5 +10,9 @@
   "devDependencies": {
     "esbuild": "^0.21.0",
     "serve": "^14.0.0"
+  },
+  "dependencies": {
+    "drand-client": "^1.4.2",
+    "tlock-js": "^0.9.0"
   }
 }
