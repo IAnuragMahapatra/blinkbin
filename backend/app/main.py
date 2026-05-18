@@ -28,13 +28,17 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://blinkbin.xyz"],
+    allow_origins=["https://blinkbin.xyz", "http://localhost:5173", "http://127.0.0.1:5173", "http://localhost"],
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type"],
 )
 
 app.include_router(router)
 
+
+@app.get("/api/health")
+async def api_health():
+    return {"status": "ok"}
 
 @app.get("/health")
 async def health():

@@ -5,7 +5,7 @@
   "description": "BlinkBin frontend — vanilla JS, no framework",
   "scripts": {
     "build": "node build.mjs",
-    "dev": "npx serve . -p 3000 --no-clipboard"
+    "dev": "npx serve . -p 5173 --no-clipboard"
   },
   "devDependencies": {
     "esbuild": "^0.21.0",
