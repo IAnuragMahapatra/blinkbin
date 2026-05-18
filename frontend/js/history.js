@@ -37,10 +37,10 @@ function showSetupGate() {
 
   const form     = $("gate-form");
   const inputEl  = $("gate-password");
-  const confirmEl = $("gate-confirm");
+  const confirmEl = $("gate-confirm-input");
   const errEl    = $("gate-error");
 
-  if (confirmEl) confirmEl.hidden = false;
+  if ($("gate-confirm")) $("gate-confirm").hidden = false;
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -78,8 +78,7 @@ function showUnlockGate() {
   const form    = $("gate-form");
   const inputEl = $("gate-password");
   const errEl   = $("gate-error");
-  const confirm = $("gate-confirm");
-  if (confirm) confirm.hidden = true;
+  if ($("gate-confirm")) $("gate-confirm").hidden = true;
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
