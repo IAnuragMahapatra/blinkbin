@@ -25,7 +25,10 @@ const submitBtn     = $("submit-btn");
 const formEl        = $("create-form");
 const successEl     = $("success-section");
 const formSection   = $("form-section");
-const mdPreviewWrap = $("md-preview-wrap");
+const mdToggleGroup = $("md-toggle-group");
+const btnModeEdit   = $("btn-mode-edit");
+const btnModePreview= $("btn-mode-preview");
+const editorContainer = $("editor-container");
 const mdPreview     = $("md-preview");
 const deadDropNote  = $("dead-drop-ttl-note");
 
@@ -64,11 +67,27 @@ passwordTogEl.addEventListener("click", () => {
 // ─── Language → markdown preview ──────────────────────────
 langEl.addEventListener("change", () => {
   if (langEl.value === "markdown") {
-    mdPreviewWrap.hidden = false;
+    mdToggleGroup.hidden = false;
     renderMarkdownPreview();
   } else {
-    mdPreviewWrap.hidden = true;
+    mdToggleGroup.hidden = true;
+    editorContainer.classList.remove("show-preview");
+    btnModePreview.classList.remove("active");
+    btnModeEdit.classList.add("active");
   }
+});
+
+btnModeEdit.addEventListener("click", () => {
+  editorContainer.classList.remove("show-preview");
+  btnModePreview.classList.remove("active");
+  btnModeEdit.classList.add("active");
+});
+
+btnModePreview.addEventListener("click", () => {
+  editorContainer.classList.add("show-preview");
+  btnModeEdit.classList.remove("active");
+  btnModePreview.classList.add("active");
+  renderMarkdownPreview();
 });
 
 editorEl.addEventListener("input", () => {
