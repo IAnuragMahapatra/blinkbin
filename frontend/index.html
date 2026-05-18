@@ -6,6 +6,7 @@
   <title>BlinkBin — Share Secrets Without a Trace</title>
   <meta name="description" content="Zero-knowledge ephemeral secret sharing. Server stores only ciphertext — never plaintext, never keys. Encrypted in your browser." />
 
+  <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="stylesheet" href="/css/index.css" />
 </head>
 <body class="page">
@@ -54,6 +55,8 @@
           <div class="form-group mt-6">
             <label class="form-label" for="password">Password <span class="text-faint fw-400">(optional)</span></label>
             <div class="password-wrap">
+              <input type="text" autocomplete="username" aria-hidden="true" tabindex="-1"
+                style="display:none" />
               <input class="form-input" type="password" id="password" name="password"
                 placeholder="Optional passphrase" autocomplete="new-password" />
               <button type="button" class="password-toggle" id="password-toggle"
