@@ -19,7 +19,8 @@ const deadDropInput = $("dead-drop-datetime");
 const burnGroup     = document.querySelectorAll('input[name="burn"]');
 const ttlSection    = $("ttl-section");
 const ttlPresets    = document.querySelectorAll(".ttl-preset");
-const ttlCustomEl   = $("ttl-custom");
+const ttlCustomWrap = $("ttl-custom");
+const ttlCustomEl   = $("ttl-custom-input");
 const labelEl       = $("label");
 const submitBtn     = $("submit-btn");
 const formEl        = $("create-form");
@@ -133,10 +134,10 @@ ttlPresets.forEach((btn) => {
     const val = btn.dataset.ttl;
     if (val === "custom") {
       selectedTTL = null;
-      ttlCustomEl.hidden = false;
+      ttlCustomWrap.hidden = false;
     } else {
       selectedTTL = TTL_MAP[val];
-      ttlCustomEl.hidden = true;
+      ttlCustomWrap.hidden = true;
     }
     ttlPresets.forEach((p) => p.classList.remove("active"));
     btn.classList.add("active");
