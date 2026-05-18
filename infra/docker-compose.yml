@@ -74,6 +74,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:80"
+    volumes:
+      - ../frontend:/usr/share/nginx/html:ro
     networks: [blinkbin]
     depends_on:
       - fastapi
