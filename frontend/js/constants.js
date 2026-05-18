@@ -3,7 +3,7 @@ export const HARD_EXPIRY_DAYS = 30;
 export const DRAND_GENESIS = 1692803367;
 export const DRAND_PERIOD = 3; // seconds per round
 export const PBKDF2_ITERATIONS = 100_000;
-export const API_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") ? "http://localhost/api" : "/api";
+export const API_BASE = "/api";
 
 // paste content limits (plaintext bytes)
 export const SIZE_WARN_BYTES = 700_000;  // ~700KB → show amber warning
