@@ -27,7 +27,7 @@ const labelEl       = $("label");
 const submitBtn     = $("submit-btn");
 const formEl        = $("create-form");
 const successEl     = $("success-section");
-const formSection   = $("form-section");
+const layoutCreate  = document.querySelector(".layout-create");
 const mdToggleGroup = $("md-toggle-group");
 const btnModeEdit   = $("btn-mode-edit");
 const btnModePreview= $("btn-mode-preview");
@@ -297,7 +297,7 @@ formEl.addEventListener("submit", async (e) => {
 
 // ─── Success view ─────────────────────────────────────────
 function showSuccess(url, hardDeleteAt, unlockAt, burnVal) {
-  formSection.hidden = true;
+  layoutCreate.hidden = true;
   successEl.hidden = false;
 
   $("success-url").textContent = url;
@@ -323,7 +323,7 @@ function showSuccess(url, hardDeleteAt, unlockAt, burnVal) {
   });
 
   $("create-another").addEventListener("click", () => {
-    formSection.hidden = false;
+    layoutCreate.hidden = false;
     successEl.hidden = true;
     formEl.reset();
     editorEl.value = "";

@@ -822,6 +822,11 @@ input[type="datetime-local"] {
 }
 
 /*  CreationSuccess  */
+#success-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 .success-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
