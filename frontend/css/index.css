@@ -934,13 +934,14 @@ input[type="datetime-local"] {
   gap: var(--sp-3);
   padding: var(--sp-4) var(--sp-6);
   border-radius: var(--radius-md);
-  background: oklch(18% 0.06 25);
-  border: 1px solid var(--clr-danger-600);
+  background: var(--color-accent-muted);
+  border: 1px solid var(--color-border-focus);
   margin-bottom: var(--sp-6);
+  color: var(--color-accent);
 }
 .burn-banner-text {
   font-size: var(--text-sm);
-  color: var(--color-danger);
+  color: var(--color-accent);
   font-weight: 500;
 }
 
