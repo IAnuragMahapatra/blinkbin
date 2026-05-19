@@ -6,6 +6,7 @@ import {
 } from "./crypto.js";
 import { computeRound, ibeEncrypt, roundToUnix } from "./timelock.js";
 import { toast, toastError, toastSuccess, copyToClipboard, formatDate, formatDatetime } from "./ui.js";
+import { setupCustomSelect } from "./custom-select.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -36,6 +37,24 @@ const deadDropNote  = $("dead-drop-ttl-note");
 
 // ─── State ────────────────────────────────────────────────
 let selectedTTL = null; // null | seconds
+
+// ─── Initialize custom UI ─────────────────────────────────
+setupCustomSelect(langEl);
+let fpInstance = null;
+if (window.flatpickr) {
+  fpInstance = window.flatpickr(deadDropInput, {
+    enableTime: true,
+    minDate: new Date(Date.now() + 60_000),
+    disableMobile: true, // force flatpickr UI on mobile to avoid native huge popups
+    monthSelectorType: "static", // Removes the native dropdown with the unstyleable blue hover
+    onChange: function(selectedDates, dateStr, instance) {
+      // Prevent Flatpickr from auto-highlighting the hour input when a date is clicked
+      if (instance.timeContainer && instance.timeContainer.contains(document.activeElement)) {
+        document.activeElement.blur();
+      }
+    }
+  });
+}
 
 // ─── Size counter ─────────────────────────────────────────
 editorEl.addEventListener("input", () => {
@@ -110,6 +129,9 @@ deadDropCheck.addEventListener("change", () => {
     // min = now + 1 minute
     const minDt = new Date(Date.now() + 60_000);
     deadDropInput.min = minDt.toISOString().slice(0, 16);
+    if (fpInstance) {
+      fpInstance.set("minDate", minDt);
+    }
   }
   if (deadDropNote) deadDropNote.hidden = !enabled;
 });

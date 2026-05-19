@@ -134,11 +134,16 @@ a {
   ::-webkit-scrollbar-thumb:hover { background: var(--color-scrollbar-thumb-hover); }
 }
 
-/* ─── Focus ──────────────────────────────────────────────── */
+/* ─── Focus & Selection ────────────────────────────────────── */
 :focus-visible {
   outline: 2px solid var(--color-border-focus);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
+}
+
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-bg);
 }
 
 /* ─── Layout ─────────────────────────────────────────────── */
@@ -419,6 +424,7 @@ main {
   transition: border-color var(--dur-ui) var(--ease-out);
   min-height: 44px;
   outline: none;
+  accent-color: var(--color-accent);
 }
 .form-input:focus,
 .form-select:focus,
@@ -430,13 +436,154 @@ main {
   color: var(--color-text-faint);
 }
 
-.form-select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23808090' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+/* ─── Flatpickr Overrides ────────────────────────────────────────── */
+.flatpickr-calendar {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+}
+.flatpickr-calendar::before, .flatpickr-calendar::after {
+  display: none !important;
+}
+.flatpickr-months .flatpickr-month {
+  background: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  fill: var(--color-text) !important;
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month .cur-month {
+  background: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months .flatpickr-monthDropdown-month {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+.flatpickr-current-month .numInputWrapper span.arrowUp:after { border-bottom-color: var(--color-text) !important; }
+.flatpickr-current-month .numInputWrapper span.arrowDown:after { border-top-color: var(--color-text) !important; }
+span.flatpickr-weekday {
+  background: var(--color-surface) !important;
+  color: var(--color-text-muted) !important;
+}
+.flatpickr-day {
+  color: var(--color-text) !important;
+}
+.flatpickr-day.flatpickr-disabled, .flatpickr-day.flatpickr-disabled:hover {
+  color: var(--color-text-faint) !important;
+}
+.flatpickr-day:hover, .flatpickr-day:focus {
+  background: var(--color-surface-alt) !important;
+  border-color: var(--color-surface-alt) !important;
+}
+.flatpickr-day.today {
+  border-color: var(--color-border-focus) !important;
+}
+.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange, .flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus, .flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover, .flatpickr-day.selected.prevMonthDay, .flatpickr-day.startRange.prevMonthDay, .flatpickr-day.endRange.prevMonthDay, .flatpickr-day.selected.nextMonthDay, .flatpickr-day.startRange.nextMonthDay, .flatpickr-day.endRange.nextMonthDay {
+  background: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  color: var(--color-bg) !important;
+  font-weight: 500;
+}
+.flatpickr-time {
+  border-top: 1px solid var(--color-border) !important;
+}
+.flatpickr-time input, .flatpickr-time .flatpickr-time-separator, .flatpickr-time .flatpickr-am-pm {
+  color: var(--color-text) !important;
+}
+.flatpickr-time input:hover, .flatpickr-time .flatpickr-am-pm:hover, .flatpickr-time input:focus, .flatpickr-time .flatpickr-am-pm:focus {
+  background: var(--color-surface-alt) !important;
+}
+
+/* ─── Custom Select ────────────────────────────────────────── */
+.custom-select-wrapper {
+  position: relative;
+  width: 100%;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.custom-select-display {
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3) var(--sp-4);
+  padding-right: var(--sp-8);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: border-color var(--dur-ui) var(--ease-out);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right var(--sp-3) center;
-  padding-right: var(--sp-8);
+}
+
+.custom-select-wrapper:focus .custom-select-display {
+  border-color: var(--color-border-focus);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  margin-top: 4px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 50;
+  display: none;
+}
+
+.custom-select-wrapper.open .custom-select-dropdown {
+  display: block;
+}
+
+.custom-select-item {
+  padding: var(--sp-2) var(--sp-4);
   cursor: pointer;
+  transition: background-color var(--dur-fast);
+}
+
+.custom-select-item:hover, .custom-select-item.selected {
+  background-color: var(--color-surface-alt);
+}
+.custom-select-item.selected {
+  color: var(--color-accent);
+}
+
+
+.form-select:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+
+.form-select option {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+.form-input:disabled,
+.form-select:disabled,
+.form-textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity var(--dur-ui) var(--ease-out);
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
 }
 
 /* ─── PasteEditor & Markdown Preview ───────────────────────── */
