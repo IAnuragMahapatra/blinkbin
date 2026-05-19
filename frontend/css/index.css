@@ -101,9 +101,6 @@ html {
   color-scheme: dark;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
 }
 
 body {
@@ -113,9 +110,6 @@ body {
   line-height: 1.6;
   color: var(--color-text);
   background-color: var(--color-bg);
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
 }
 
 img, svg { display: block; max-width: 100%; }
@@ -151,43 +145,42 @@ a {
 .page {
   display: flex;
   flex-direction: column;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
 }
 
 main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 /* Create: 40/60 split */
 .layout-create {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--sp-8);
-  padding: var(--sp-8) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  padding: var(--sp-4);
   max-width: 80rem;
   margin: 0 auto;
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+}
+
+#editor-section {
+  order: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
 }
 
 #form-section {
-  overflow-y: auto;
-  padding-right: var(--sp-4);
+  order: 2;
 }
 
-.layout-create > section[aria-label="Paste content"] {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+#action-section {
+  order: 3;
 }
 
-.layout-create > section[aria-label="Paste content"] > .form-group {
+#editor-section > .form-group {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -198,20 +191,56 @@ main {
 .layout-well {
   max-width: 48rem;
   margin: 0 auto;
-  padding: var(--sp-8) var(--sp-4);
+  padding: var(--sp-4);
   width: 100%;
   height: 100%;
   overflow-y: auto;
+}
+
+@media (min-width: 48rem) {
+  html, body, .page {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+  main {
+    overflow: hidden;
+  }
+  .layout-create {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr auto;
+    gap: var(--sp-6);
+    padding: var(--sp-6) var(--sp-6);
+    height: 100%;
+    overflow: hidden;
+  }
+  #form-section {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    overflow-y: auto;
+    padding-right: var(--sp-4);
+  }
+  #editor-section {
+    grid-column: 2;
+    grid-row: 1;
+    overflow-y: auto;
+  }
+  #action-section {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .layout-well {
+    padding: var(--sp-8);
+  }
 }
 
 @media (min-width: 72rem) {
   .layout-create {
     grid-template-columns: 3fr 5fr;
     padding: var(--sp-12) var(--sp-8);
+    gap: var(--sp-8);
   }
-}
-
-@media (min-width: 48rem) {
   .layout-well {
     padding: var(--sp-12) var(--sp-8);
   }
@@ -449,7 +478,7 @@ main {
   position: relative;
   width: 100%;
   flex: 1;
-  min-height: 320px;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
 }

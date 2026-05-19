@@ -140,7 +140,7 @@
       </aside>
 
       <!-- Right: editor -->
-      <section aria-label="Paste content">
+      <section id="editor-section" aria-label="Paste content">
         <div class="form-group" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
           <div class="editor-header">
             <label class="form-label" for="editor" style="margin-bottom: 0;">Content</label>
@@ -165,20 +165,22 @@
           </div>
           <p class="size-counter mt-2" id="size-counter" aria-live="polite">0 KB / 750 KB</p>
         </div>
-        <div style="margin-top: 1rem;">
-          <!-- Label -->
-          <div class="form-group">
-            <label class="form-label" for="label">Label <span class="text-faint fw-400">(optional)</span></label>
-            <input class="form-input" type="text" id="label" name="label" form="create-form"
-              placeholder="e.g. prod DB creds — Q4" maxlength="100" />
-            <p class="form-helper">Only visible to you in history. Never sent to the server.</p>
-          </div>
-
-          <button type="submit" class="btn btn-primary w-full" style="margin-top: 1rem;" id="submit-btn" form="create-form">
-            Create Paste
-          </button>
-        </div>
       </section>
+
+      <!-- Right: submit -->
+      <div id="action-section" style="margin-top: 1rem;">
+        <!-- Label -->
+        <div class="form-group">
+          <label class="form-label" for="label">Label <span class="text-faint fw-400">(optional)</span></label>
+          <input class="form-input" type="text" id="label" name="label" form="create-form"
+            placeholder="e.g. prod DB creds — Q4" maxlength="100" />
+          <p class="form-helper">Only visible to you in history. Never sent to the server.</p>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full" style="margin-top: 1rem;" id="submit-btn" form="create-form">
+          Create Paste
+        </button>
+      </div>
 
     </div>
 
