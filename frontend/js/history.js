@@ -15,7 +15,7 @@ let historyKey = null; // AES CryptoKey for session
 
 const $ = (id) => document.getElementById(id);
 
-// ─── Init ─────────────────────────────────────────────────
+//  Init
 async function init() {
   const hasHistory = localStorage.getItem(STORAGE_KEY_DATA);
   const hasSalt    = localStorage.getItem(STORAGE_KEY_SALT);
@@ -27,7 +27,7 @@ async function init() {
   }
 }
 
-// ─── First-time setup ─────────────────────────────────────
+//  First-time setup
 function showSetupGate() {
   const gate = $("history-gate");
   gate.hidden = false;
@@ -72,7 +72,7 @@ function showSetupGate() {
   });
 }
 
-// ─── Unlock gate ──────────────────────────────────────────
+//  Unlock gate
 function showUnlockGate() {
   const gate = $("history-gate");
   gate.hidden = false;
@@ -107,7 +107,7 @@ function showUnlockGate() {
   });
 }
 
-// ─── Show table ───────────────────────────────────────────
+//  Show table
 async function showHistory() {
   const entries = await loadEntries();
   const tableSection = $("history-section");
@@ -125,7 +125,7 @@ async function showHistory() {
   renderTable(entries);
 }
 
-// ─── Render table ─────────────────────────────────────────
+//  Render table
 let sortCol = "created_at";
 let sortAsc = false;
 
@@ -182,7 +182,7 @@ document.querySelectorAll(".history-table th[data-col]").forEach((th) => {
   });
 });
 
-// ─── Encrypted storage ────────────────────────────────────
+//  Encrypted storage
 async function saveEntries(entries) {
   const json       = JSON.stringify(entries);
   const encrypted  = await encrypt(json, historyKey);
@@ -196,7 +196,7 @@ async function loadEntries() {
   return JSON.parse(json);
 }
 
-// ─── Import pending from create page ─────────────────────
+//  Import pending from create page
 async function importPending(scalar) {
   const raw = localStorage.getItem(PENDING_KEY);
   if (!raw) return;
@@ -238,5 +238,5 @@ function escHtml(str) {
     .replace(/>/g, "&gt;");
 }
 
-// ─── Start ────────────────────────────────────────────────
+//  Start
 init();

@@ -10,7 +10,7 @@ import { setupCustomSelect } from "./custom-select.js";
 
 const $ = (id) => document.getElementById(id);
 
-// ─── Form elements ────────────────────────────────────────
+//  Form elements
 const editorEl      = $("editor");
 const sizeCounterEl = $("size-counter");
 const langEl        = $("language");
@@ -35,10 +35,10 @@ const editorContainer = $("editor-container");
 const mdPreview     = $("md-preview");
 const deadDropNote  = $("dead-drop-ttl-note");
 
-// ─── State ────────────────────────────────────────────────
+//  State
 let selectedTTL = null; // null | seconds
 
-// ─── Initialize custom UI ─────────────────────────────────
+//  Initialize custom UI
 setupCustomSelect(langEl);
 let fpInstance = null;
 if (window.flatpickr) {
@@ -56,7 +56,7 @@ if (window.flatpickr) {
   });
 }
 
-// ─── Size counter ─────────────────────────────────────────
+//  Size counter
 editorEl.addEventListener("input", () => {
   const bytes = new TextEncoder().encode(editorEl.value).length;
   const kb = (bytes / 1024).toFixed(0);
@@ -78,24 +78,16 @@ editorEl.addEventListener("input", () => {
   }
 });
 
-// ─── Password visibility toggle ───────────────────────────
+//  Password visibility toggle
 passwordTogEl.addEventListener("click", () => {
   const isText = passwordEl.type === "text";
   passwordEl.type = isText ? "password" : "text";
   passwordTogEl.innerHTML = isText ? EYE_ICON : EYE_OFF_ICON;
 });
 
-// ─── Language → markdown preview ──────────────────────────
+//  Language → preview
 langEl.addEventListener("change", () => {
-  if (langEl.value === "markdown") {
-    mdToggleGroup.hidden = false;
-    renderMarkdownPreview();
-  } else {
-    mdToggleGroup.hidden = true;
-    editorContainer.classList.remove("show-preview");
-    btnModePreview.classList.remove("active");
-    btnModeEdit.classList.add("active");
-  }
+  renderPreview();
 });
 
 btnModeEdit.addEventListener("click", () => {
@@ -108,17 +100,42 @@ btnModePreview.addEventListener("click", () => {
   editorContainer.classList.add("show-preview");
   btnModeEdit.classList.remove("active");
   btnModePreview.classList.add("active");
-  renderMarkdownPreview();
+  renderPreview();
 });
 
 editorEl.addEventListener("input", () => {
-  if (langEl.value === "markdown") renderMarkdownPreview();
+  if (editorContainer.classList.contains("show-preview")) renderPreview();
 });
 
-function renderMarkdownPreview() {
-  if (window.marked) {
-    mdPreview.innerHTML = window.marked.parse(editorEl.value || "");
+function renderPreview() {
+  const lang = langEl.value;
+  const content = editorEl.value || "";
+  
+  if (lang === "markdown") {
+    if (window.marked) {
+      mdPreview.innerHTML = window.marked.parse(content);
+      window.Prism?.highlightAllUnder(mdPreview);
+    }
+  } else if (lang === "plaintext") {
+    mdPreview.innerHTML = `<pre>${escHtml(content)}</pre>`;
+  } else {
+    const code = document.createElement("code");
+    code.className = `language-${lang}`;
+    code.textContent = content;
+    const pre = document.createElement("pre");
+    pre.appendChild(code);
+    mdPreview.innerHTML = "";
+    mdPreview.appendChild(pre);
+    window.Prism?.highlightElement(code);
   }
+}
+
+function escHtml(str) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 // ─── Dead Drop toggle ─────────────────────────────────────
@@ -324,7 +341,7 @@ async function saveHistory(entry) {
     const pubKeyBytes = fromBase64(pubB64);
     const { privateKey: ephPriv, publicKey: ephPub } = generateEphemeralECDH();
     const aesKey = await ecdhDeriveAESKey(ephPriv, pubKeyBytes);
-    
+
     const fullEntry = { ...entry, created_at: Math.floor(Date.now() / 1000) };
     const ciphertext = await encrypt(JSON.stringify(fullEntry), aesKey);
 

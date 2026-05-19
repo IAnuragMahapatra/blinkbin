@@ -1,7 +1,7 @@
 // AES-256-GCM + PBKDF2 — Web Crypto API only, no external libs
 // IV is always 12 bytes prepended to ciphertext in base64 payload
 
-// ─── Key generation ───────────────────────────────────────
+//  Key generation
 import { p256 } from "../vendor/noble-curves.bundle.js";
 
 export async function generateAESKey() {
@@ -26,7 +26,7 @@ export async function importKey(raw) {
   );
 }
 
-// ─── Encrypt / Decrypt ────────────────────────────────────
+//  Encrypt / Decrypt
 export async function encrypt(plaintext, key) {
   const iv = crypto.getRandomValues(new Uint8Array(12)); // 12 bytes — AES-GCM spec
   const encoded = new TextEncoder().encode(plaintext);
@@ -48,7 +48,7 @@ export async function decrypt(base64Payload, key) {
   return new TextDecoder().decode(plainBuf);
 }
 
-// ─── Password layer ───────────────────────────────────────
+//  Password layer
 import { PBKDF2_ITERATIONS } from "./constants.js";
 
 export async function derivePasswordKey(password, salt) {
@@ -73,7 +73,7 @@ export async function derivePasswordKey(password, salt) {
   );
 }
 
-// ─── Deterministic ECDH (History) ─────────────────────────
+//  Deterministic ECDH (History)
 export async function deriveHistoryScalar(password, salt) {
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
@@ -142,7 +142,7 @@ export async function unwrapKey(wrappedBytes, passwordKey) {
   return new Uint8Array(plainBuf);
 }
 
-// ─── Fragment encoding ────────────────────────────────────
+//  Fragment encoding
 // always use standard base64 (not base64url) — dot separator is safe
 
 export function buildFragment(aesKeyBytes, salt = null, wrappedOrLocked = null) {
@@ -168,7 +168,7 @@ export function parseFragment(fragment) {
   return { type: "password", salt, payload };
 }
 
-// ─── Base64 helpers ───────────────────────────────────────
+//  Base64 helpers
 export function toBase64(bytes) {
   return btoa(String.fromCharCode(...bytes));
 }

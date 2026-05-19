@@ -6,7 +6,7 @@ import { DRAND_GENESIS, DRAND_PERIOD } from "./constants.js";
 const DRAND_CHAIN = "52db9ba70e0cc0f6eaf7803dd07447a1f5477735fd3f661792ba94600c84e971";
 const DRAND_API   = `https://api.drand.sh/${DRAND_CHAIN}`;
 
-// ─── Round ───────────────────────────────────────────────
+//  Round
 export function computeRound(unlockUnixSec) {
   return Math.floor((unlockUnixSec - DRAND_GENESIS) / DRAND_PERIOD);
 }
@@ -15,7 +15,7 @@ export function roundToUnix(roundId) {
   return DRAND_GENESIS + roundId * DRAND_PERIOD;
 }
 
-// ─── IBE encrypt ─────────────────────────────────────────
+//  IBE encrypt
 // plaintext: Uint8Array — the AES key bytes (or wrapped key bytes)
 // returns: Uint8Array of IBE ciphertext
 export async function ibeEncrypt(plaintext, roundId) {
@@ -41,14 +41,14 @@ export async function ibeDecrypt(lockedBytes, roundId) {
   return new Uint8Array(decryptedBuf);
 }
 
-// ─── Fetch drand round output ─────────────────────────────
+//  Fetch drand round output
 export async function fetchDrandRound(roundId) {
   const { quicknetClient } = window.tlock;
   const client = quicknetClient();
   return client.get(roundId);
 }
 
-// ─── Availability check ───────────────────────────────────
+//  Availability check
 export async function checkDrandAvailable() {
   try {
     const res = await fetch(`${DRAND_API}/info`, { signal: AbortSignal.timeout(5000) });

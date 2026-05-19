@@ -1,6 +1,6 @@
 // shared UI helpers — toasts, copy, countdown, loading states
 
-// ─── Toast ────────────────────────────────────────────────
+//  Toast
 let toastContainer = null;
 
 function ensureContainer() {
@@ -28,7 +28,7 @@ export function toast(message, type = "default", duration = 3000) {
 export const toastSuccess = (msg) => toast(msg, "success");
 export const toastError   = (msg) => toast(msg, "error");
 
-// ─── Copy to clipboard ────────────────────────────────────
+//  Copy to clipboard
 export async function copyToClipboard(text, btnEl = null) {
   try {
     await navigator.clipboard.writeText(text);
@@ -54,7 +54,7 @@ function morphCopyBtn(btn, success) {
   }, 2000);
 }
 
-// ─── Countdown timer ──────────────────────────────────────
+//  Countdown timer
 export function startCountdown(unlockUnix, displayEl, labelEl = null, onZero = null) {
   function render() {
     const diff = unlockUnix - Math.floor(Date.now() / 1000);
@@ -86,7 +86,7 @@ export function startCountdown(unlockUnix, displayEl, labelEl = null, onZero = n
 
 function pad(n) { return String(n).padStart(2, "0"); }
 
-// ─── Loading state helpers ────────────────────────────────
+//  Loading state helpers
 export function showLoading(container, message = "Loading...") {
   container.innerHTML = `
     <div class="loading-state">

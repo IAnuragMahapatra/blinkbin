@@ -2,7 +2,7 @@
 import * as esbuild from "esbuild";
 import { readFileSync, writeFileSync } from "fs";
 
-// ─── timelock bundle ─────────────────────────────────────
+//  timelock bundle
 await esbuild.build({
   entryPoints: ["build-entry/timelock-entry.js"],
   bundle: true,

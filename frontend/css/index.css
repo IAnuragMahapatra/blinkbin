@@ -1,6 +1,6 @@
 @import url('./fonts.css');
 
-/* ─── Primitives ─────────────────────────────────────────── */
+/*  Primitives  */
 :root {
   --clr-neutral-950: oklch(8% 0.015 250);
   --clr-neutral-900: oklch(12% 0.012 250);
@@ -24,7 +24,7 @@
   --clr-success-500: oklch(65% 0.18 145);
   --clr-info-500: oklch(60% 0.14 230);
 
-  /* ─── Semantic ────────────────────────── */
+  /*  Semantic  */
   --color-bg:           var(--clr-neutral-950);
   --color-surface:      var(--clr-neutral-900);
   --color-surface-alt:  var(--clr-neutral-800);
@@ -44,7 +44,7 @@
   --color-scrollbar-thumb: var(--clr-neutral-800);
   --color-scrollbar-thumb-hover: var(--clr-neutral-700);
 
-  /* ─── Spacing scale (0.25rem unit) ────── */
+  /*  Spacing scale (0.25rem unit)  */
   --sp-1:  0.25rem;
   --sp-2:  0.5rem;
   --sp-3:  0.75rem;
@@ -54,13 +54,13 @@
   --sp-12: 3rem;
   --sp-16: 4rem;
 
-  /* ─── Radii ───────────────────────────── */
+  /*  Radii  */
   --radius-sm:   0.25rem;
   --radius-md:   0.5rem;
   --radius-lg:   0.75rem;
   --radius-full: 9999px;
 
-  /* ─── Motion ──────────────────────────── */
+  /*  Motion  */
   --ease-out:     cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out:  cubic-bezier(0.77, 0, 0.175, 1);
   --ease-snap:    cubic-bezier(0.5, 0, 0, 1);
@@ -69,7 +69,7 @@
   --dur-enter:    350ms;
   --dur-exit:     200ms;
 
-  /* ─── Type scale ──────────────────────── */
+  /*  Type scale  */
   --font-body: 'IBM Plex Sans', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
@@ -83,7 +83,7 @@
   --text-4xl:  2.25rem;
 }
 
-/* ─── Reset ──────────────────────────────────────────────── */
+/*  Reset  */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -122,7 +122,7 @@ a {
   a:hover { color: var(--color-accent-hover); }
 }
 
-/* ─── Custom scrollbar ───────────────────────────────────── */
+/*  Custom scrollbar  */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--color-scrollbar-track); }
 ::-webkit-scrollbar-thumb {
@@ -134,7 +134,7 @@ a {
   ::-webkit-scrollbar-thumb:hover { background: var(--color-scrollbar-thumb-hover); }
 }
 
-/* ─── Focus & Selection ────────────────────────────────────── */
+/*  Focus & Selection  */
 :focus-visible {
   outline: 2px solid var(--color-border-focus);
   outline-offset: 2px;
@@ -146,7 +146,7 @@ a {
   color: var(--color-bg);
 }
 
-/* ─── Layout ─────────────────────────────────────────────── */
+/*  Layout  */
 .page {
   display: flex;
   flex-direction: column;
@@ -251,7 +251,7 @@ main {
   }
 }
 
-/* ─── NavBar ─────────────────────────────────────────────── */
+/*  NavBar  */
 .nav {
   display: flex;
   align-items: center;
@@ -287,7 +287,7 @@ main {
 }
 .nav-links a.active { color: var(--color-text); }
 
-/* ─── Button ─────────────────────────────────────────────── */
+/*  Button  */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -338,7 +338,7 @@ main {
   cursor: not-allowed;
 }
 
-/* ─── StatusBadge ────────────────────────────────────────── */
+/*  StatusBadge  */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -362,7 +362,7 @@ main {
   color: var(--color-success);
 }
 
-/* ─── CopyButton ─────────────────────────────────────────── */
+/*  CopyButton  */
 .copy-btn {
   display: inline-flex;
   align-items: center;
@@ -390,7 +390,7 @@ main {
   border-color: var(--color-success);
 }
 
-/* ─── Form elements ──────────────────────────────────────── */
+/*  Form elements  */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -436,7 +436,7 @@ main {
   color: var(--color-text-faint);
 }
 
-/* ─── Flatpickr Overrides ────────────────────────────────────────── */
+/*  Flatpickr Overrides  */
 .flatpickr-calendar {
   background: var(--color-surface) !important;
   border: 1px solid var(--color-border) !important;
@@ -494,7 +494,7 @@ span.flatpickr-weekday {
   background: var(--color-surface-alt) !important;
 }
 
-/* ─── Custom Select ────────────────────────────────────────── */
+/*  Custom Select  */
 .custom-select-wrapper {
   position: relative;
   width: 100%;
@@ -586,7 +586,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
 }
 
-/* ─── PasteEditor & Markdown Preview ───────────────────────── */
+/*  PasteEditor & Markdown Preview  */
 .editor-header {
   display: flex;
   justify-content: space-between;
@@ -682,7 +682,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   z-index: 2;
 }
 
-/* ─── SizeCounter ────────────────────────────────────────── */
+/*  SizeCounter  */
 .size-counter {
   font-size: var(--text-xs);
   color: var(--color-text-faint);
@@ -692,7 +692,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 .size-counter.warn { color: var(--color-accent); }
 .size-counter.full { color: var(--color-danger); }
 
-/* ─── PasswordInput ──────────────────────────────────────── */
+/*  PasswordInput  */
 .password-wrap {
   position: relative;
 }
@@ -720,7 +720,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   .password-toggle:hover { color: var(--color-text-muted); }
 }
 
-/* ─── BurnRadioGroup ─────────────────────────────────────── */
+/*  BurnRadioGroup  */
 .burn-group {
   display: flex;
   flex-direction: column;
@@ -761,7 +761,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   color: var(--color-text-faint);
 }
 
-/* ─── TTLPicker ──────────────────────────────────────────── */
+/*  TTLPicker  */
 .ttl-presets {
   display: flex;
   flex-wrap: wrap;
@@ -789,7 +789,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   color: var(--color-accent);
 }
 
-/* ─── DeadDropDatetime ───────────────────────────────────── */
+/*  DeadDropDatetime  */
 .dead-drop-toggle {
   display: flex;
   align-items: center;
@@ -806,7 +806,7 @@ input[type="datetime-local"] {
   color-scheme: dark;
 }
 
-/* ─── CountdownTimer ─────────────────────────────────────── */
+/*  CountdownTimer  */
 .countdown {
   font-family: var(--font-mono);
   font-size: var(--text-3xl);
@@ -820,7 +820,7 @@ input[type="datetime-local"] {
   margin-top: var(--sp-1);
 }
 
-/* ─── CreationSuccess ────────────────────────────────────── */
+/*  CreationSuccess  */
 .success-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -851,7 +851,7 @@ input[type="datetime-local"] {
   align-items: flex-start;
 }
 
-/* ─── LockedState ────────────────────────────────────────── */
+/*  LockedState  */
 .locked-state {
   display: flex;
   flex-direction: column;
@@ -879,7 +879,7 @@ input[type="datetime-local"] {
   max-width: 36ch;
 }
 
-/* ─── ReadableState ──────────────────────────────────────── */
+/*  ReadableState  */
 .readable-header {
   display: flex;
   align-items: center;
@@ -926,7 +926,7 @@ input[type="datetime-local"] {
   border-radius: var(--radius-sm);
 }
 
-/* ─── BurnWarningBanner ──────────────────────────────────── */
+/*  BurnWarningBanner  */
 .burn-banner {
   display: flex;
   align-items: flex-start;
@@ -943,7 +943,7 @@ input[type="datetime-local"] {
   font-weight: 500;
 }
 
-/* ─── PasswordPrompt ─────────────────────────────────────── */
+/*  PasswordPrompt  */
 .password-prompt {
   display: flex;
   flex-direction: column;
@@ -967,7 +967,7 @@ input[type="datetime-local"] {
   max-width: 24rem;
 }
 
-/* ─── NotFoundState ──────────────────────────────────────── */
+/*  NotFoundState  */
 .not-found {
   display: flex;
   flex-direction: column;
@@ -990,7 +990,7 @@ input[type="datetime-local"] {
   max-width: 36ch;
 }
 
-/* ─── MarkdownToggle ─────────────────────────────────────── */
+/*  MarkdownToggle  */
 .markdown-toggle {
   display: flex;
   gap: 0;
@@ -1014,7 +1014,7 @@ input[type="datetime-local"] {
   color: var(--color-text);
 }
 
-/* ─── HistoryTable ───────────────────────────────────────── */
+/*  HistoryTable  */
 .history-table-wrap {
   overflow-x: auto;
 }
@@ -1047,7 +1047,7 @@ input[type="datetime-local"] {
   .history-table tbody tr:hover td { background: var(--color-surface); }
 }
 
-/* ─── HistoryPasswordGate ────────────────────────────────── */
+/*  HistoryPasswordGate  */
 .history-gate {
   display: flex;
   flex-direction: column;
@@ -1057,7 +1057,7 @@ input[type="datetime-local"] {
   text-align: center;
 }
 
-/* ─── EmptyHistoryState ──────────────────────────────────── */
+/*  EmptyHistoryState  */
 .empty-history {
   display: flex;
   flex-direction: column;
@@ -1068,7 +1068,7 @@ input[type="datetime-local"] {
   color: var(--color-text-faint);
 }
 
-/* ─── Toast system ───────────────────────────────────────── */
+/*  Toast system  */
 .toast-container {
   position: fixed;
   bottom: var(--sp-6);
@@ -1104,7 +1104,7 @@ input[type="datetime-local"] {
   to   { opacity: 0; transform: translateY(8px); }
 }
 
-/* ─── Loading spinner ────────────────────────────────────── */
+/*  Loading spinner  */
 .spinner {
   width: 24px;
   height: 24px;
@@ -1125,7 +1125,7 @@ input[type="datetime-local"] {
   font-size: var(--text-sm);
 }
 
-/* ─── Utility ────────────────────────────────────────────── */
+/*  Utility  */
 .sr-only {
   position: absolute;
   width: 1px; height: 1px;
@@ -1179,15 +1179,24 @@ input[type="datetime-local"] {
   color: var(--color-text-faint);
 }
 
-/* ─── Prism.js overrides ─────────────────────────────────── */
+/*  Prism.js overrides  */
 pre[class*="language-"],
 code[class*="language-"] {
   font-family: var(--font-mono) !important;
   font-size: var(--text-sm) !important;
   background: transparent !important;
+  text-shadow: none !important;
 }
 
-/* ─── Reduced motion ─────────────────────────────────────── */
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  background: none !important;
+}
+
+/*  Reduced motion  */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

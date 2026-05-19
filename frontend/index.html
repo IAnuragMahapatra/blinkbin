@@ -9,6 +9,8 @@
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="stylesheet" href="/vendor/flatpickr.min.css" />
   <link rel="stylesheet" href="/vendor/flatpickr.dark.min.css" />
+  <!-- Prism.js (vendored) -->
+  <link rel="stylesheet" href="/vendor/prism.css" />
   <link rel="stylesheet" href="/css/index.css" />
 </head>
 <body class="page">
@@ -146,7 +148,7 @@
         <div class="form-group" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
           <div class="editor-header">
             <label class="form-label" for="editor" style="margin-bottom: 0;">Content</label>
-            <div id="md-toggle-group" hidden class="md-toggle-group">
+            <div id="md-toggle-group" class="md-toggle-group">
               <button type="button" id="btn-mode-edit" class="md-toggle-btn active">Edit</button>
               <button type="button" id="btn-mode-preview" class="md-toggle-btn">Preview</button>
             </div>
@@ -225,6 +227,7 @@
 
   </main>
 
+  <script src="/vendor/prism.js"></script>
   <script src="/vendor/marked.min.js"></script>
   <script src="/vendor/flatpickr.min.js"></script>
   <script src="/vendor/timelock.bundle.js"></script>

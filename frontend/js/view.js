@@ -11,7 +11,7 @@ import {
 
 const $ = (id) => document.getElementById(id);
 
-// ─── State machine ────────────────────────────────────────
+//  State machine
 // States: LOADING | LOCKED | PASSWORD | READABLE | NOT_FOUND
 
 const states = {
@@ -28,7 +28,7 @@ function showState(name) {
   });
 }
 
-// ─── Init ─────────────────────────────────────────────────
+//  Init
 async function init() {
   showState("loading");
 
@@ -63,7 +63,7 @@ async function init() {
   }
 }
 
-// ─── LOCKED state ─────────────────────────────────────────
+//  LOCKED state
 function showLocked(lockedData, fragment, pasteId) {
   showState("locked");
 
@@ -96,7 +96,7 @@ function showLocked(lockedData, fragment, pasteId) {
   });
 }
 
-// ─── READABLE state ───────────────────────────────────────
+//  READABLE state
 async function handleReadable(data, fragment) {
   const { ciphertext, language, burn_on_read, hard_delete_at, round_id } = data;
 
@@ -157,7 +157,7 @@ async function handleReadable(data, fragment) {
   }
 }
 
-// ─── PASSWORD state ───────────────────────────────────────
+//  PASSWORD state
 function showPasswordPrompt(onSubmit) {
   showState("password");
 
@@ -183,7 +183,7 @@ function showPasswordPrompt(onSubmit) {
   });
 }
 
-// ─── Render content ───────────────────────────────────────
+//  Render content
 async function renderContent(ciphertext, aesKey, language, burnOnRead, hardDeleteAt) {
   let plaintext;
   try {
@@ -219,6 +219,7 @@ async function renderContent(ciphertext, aesKey, language, burnOnRead, hardDelet
       btnRaw?.classList.remove("active");
       contentEl.className = "readable-content markdown";
       contentEl.innerHTML = window.marked ? window.marked.parse(plaintext) : plaintext;
+      window.Prism?.highlightAllUnder(contentEl);
     });
 
     btnRaw?.addEventListener("click", () => {
@@ -232,6 +233,7 @@ async function renderContent(ciphertext, aesKey, language, burnOnRead, hardDelet
     contentEl.className = "readable-content markdown";
     contentEl.innerHTML = window.marked ? window.marked.parse(plaintext) : plaintext;
     btnRendered?.classList.add("active");
+    window.Prism?.highlightAllUnder(contentEl);
 
   } else if (language === "plaintext") {
     contentEl.className = "readable-content";
