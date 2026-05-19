@@ -145,9 +145,9 @@
 
       <!-- Right: editor -->
       <section id="editor-section" aria-label="Paste content">
-        <div class="form-group" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+        <div class="editor-group">
           <div class="editor-header">
-            <label class="form-label" for="editor" style="margin-bottom: 0;">Content</label>
+            <label class="form-label" for="editor">Content</label>
             <div id="md-toggle-group" class="md-toggle-group">
               <button type="button" id="btn-mode-edit" class="md-toggle-btn active">Edit</button>
               <button type="button" id="btn-mode-preview" class="md-toggle-btn">Preview</button>
@@ -172,7 +172,7 @@
       </section>
 
       <!-- Right: submit -->
-      <div id="action-section" style="margin-top: 1rem;">
+      <div id="action-section">
         <!-- Label -->
         <div class="form-group">
           <label class="form-label" for="label">Label <span class="text-faint fw-400">(optional)</span></label>
@@ -181,7 +181,7 @@
           <p class="form-helper">Only visible to you in history. Never sent to the server.</p>
         </div>
 
-        <button type="submit" class="btn btn-primary w-full" style="margin-top: 1rem;" id="submit-btn" form="create-form">
+        <button type="submit" class="btn btn-primary w-full mt-4" id="submit-btn" form="create-form">
           Create Paste
         </button>
       </div>
