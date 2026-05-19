@@ -101,6 +101,9 @@ html {
   color-scheme: dark;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 body {
@@ -110,7 +113,9 @@ body {
   line-height: 1.6;
   color: var(--color-text);
   background-color: var(--color-bg);
-  min-height: 100dvh;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 img, svg { display: block; max-width: 100%; }
@@ -146,13 +151,16 @@ a {
 .page {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 main {
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* Create: 40/60 split */
@@ -164,6 +172,26 @@ main {
   max-width: 80rem;
   margin: 0 auto;
   width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#form-section {
+  overflow-y: auto;
+  padding-right: var(--sp-4);
+}
+
+.layout-create > section[aria-label="Paste content"] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.layout-create > section[aria-label="Paste content"] > .form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 /* View + History: centered well */
@@ -172,45 +200,14 @@ main {
   margin: 0 auto;
   padding: var(--sp-8) var(--sp-4);
   width: 100%;
+  height: 100%;
+  overflow-y: auto;
 }
 
 @media (min-width: 72rem) {
-  body {
-    overflow: hidden;
-  }
-  .page {
-    height: 100dvh;
-    overflow: hidden;
-  }
-  main {
-    overflow: hidden;
-  }
   .layout-create {
     grid-template-columns: 3fr 5fr;
     padding: var(--sp-12) var(--sp-8);
-    height: 100%;
-    overflow: hidden;
-  }
-  #form-section {
-    overflow-y: auto;
-    padding-right: var(--sp-4);
-  }
-  .layout-create > section[aria-label="Paste content"] {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-  .layout-create > section[aria-label="Paste content"] > .form-group {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-  }
-  .paste-editor {
-    min-height: 0;
-  }
-  .editor-container {
-    min-height: 0;
   }
 }
 
