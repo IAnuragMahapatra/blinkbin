@@ -1,7 +1,7 @@
 import {
   generateAESKey, encrypt, decrypt, exportKey, importKey,
   derivePasswordKey, wrapKey, unwrapKey,
-  toBase64, fromBase64,
+  toBase64, fromBase64, deriveHistoryScalar, getHistoryPublicKey, ecdhDeriveAESKey
 } from "./crypto.js";
 import { toast, toastError, toastSuccess, copyToClipboard, formatDate, formatDatetime } from "./ui.js";
 
@@ -53,15 +53,19 @@ function showSetupGate() {
     if (pwd !== confirm) { errEl.textContent = "Passwords do not match"; errEl.hidden = false; return; }
 
     const salt = crypto.getRandomValues(new Uint8Array(16));
+    const scalar = await deriveHistoryScalar(pwd, salt);
+    const pubKeyBytes = getHistoryPublicKey(scalar);
     historyKey = await derivePasswordKey(pwd, salt);
+
     localStorage.setItem(STORAGE_KEY_ENC, "true");
     localStorage.setItem(STORAGE_KEY_SALT, toBase64(salt));
+    localStorage.setItem("blinkbin_history_pub", toBase64(pubKeyBytes));
 
     // initialize with empty history
     await saveEntries([]);
 
     // import any pending history from create page
-    await importPending();
+    await importPending(scalar);
 
     gate.hidden = true;
     await showHistory();
@@ -88,11 +92,12 @@ function showUnlockGate() {
     const salt = fromBase64(localStorage.getItem(STORAGE_KEY_SALT));
 
     try {
+      const scalar = await deriveHistoryScalar(pwd, salt);
       historyKey = await derivePasswordKey(pwd, salt);
       // verify by decrypting
       await loadEntries();
       gate.hidden = true;
-      await importPending();
+      await importPending(scalar);
       await showHistory();
     } catch {
       errEl.textContent = "Incorrect password.";
@@ -192,21 +197,35 @@ async function loadEntries() {
 }
 
 // ─── Import pending from create page ─────────────────────
-async function importPending() {
+async function importPending(scalar) {
   const raw = localStorage.getItem(PENDING_KEY);
   if (!raw) return;
   try {
     const pending = JSON.parse(raw);
+    const decryptedPending = [];
+    for (const p of pending) {
+      if (p.paste_id) {
+        // legacy plaintext pending — we will just discard it to avoid storing plaintext
+        continue;
+      }
+      try {
+        const ephemeralPub = fromBase64(p.ephemeral_public_key);
+        const aesKey = await ecdhDeriveAESKey(scalar, ephemeralPub);
+        const jsonStr = await decrypt(p.ciphertext, aesKey);
+        const entry = JSON.parse(jsonStr);
+        decryptedPending.push({
+          paste_id:   entry.paste_id,
+          url:        entry.url,
+          label:      entry.label,
+          language:   entry.language,
+          created_at: entry.created_at,
+          expires_at: entry.hard_delete_at,
+          unlock_at:  entry.unlock_at || null,
+        });
+      } catch (err) { console.error("Failed to decrypt pending entry:", err); }
+    }
     const existing = await loadEntries();
-    const merged = [...pending.map((p) => ({
-      paste_id:   p.paste_id,
-      url:        p.url,
-      label:      p.label,
-      language:   p.language,
-      created_at: p.created_at,
-      expires_at: p.hard_delete_at,
-      unlock_at:  p.unlock_at || null,
-    })), ...existing];
+    const merged = [...decryptedPending, ...existing];
     await saveEntries(merged);
     localStorage.removeItem(PENDING_KEY);
   } catch { /* malformed pending — discard */ }

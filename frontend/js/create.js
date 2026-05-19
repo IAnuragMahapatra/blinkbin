@@ -1,7 +1,8 @@
 import { API_BASE, SIZE_WARN_BYTES, SIZE_HARD_BYTES, HARD_EXPIRY_DAYS } from "./constants.js";
 import {
   generateAESKey, exportKey, encrypt,
-  derivePasswordKey, wrapKey, buildFragment, toBase64,
+  derivePasswordKey, wrapKey, buildFragment, toBase64, fromBase64,
+  generateEphemeralECDH, ecdhDeriveAESKey
 } from "./crypto.js";
 import { computeRound, ibeEncrypt, roundToUnix } from "./timelock.js";
 import { toast, toastError, toastSuccess, copyToClipboard, formatDate, formatDatetime } from "./ui.js";
@@ -242,7 +243,7 @@ formEl.addEventListener("submit", async (e) => {
     const url = `${location.origin}/p/${paste_id}#${fragment}`;
 
     // 5. save to history
-    saveHistory({ paste_id, url, label, language, hard_delete_at, unlock_at });
+    await saveHistory({ paste_id, url, label, language, hard_delete_at, unlock_at });
 
     // 6. show success
     showSuccess(url, hard_delete_at, unlock_at, burnVal);
@@ -267,6 +268,17 @@ function showSuccess(url, hardDeleteAt, unlockAt, burnVal) {
     : `Expires ${formatDate(hardDeleteAt)}`;
   $("success-expiry").textContent = expiryText;
 
+  const warningTextEl = $("success-warning-text");
+  if (!localStorage.getItem("blinkbin_history_pub")) {
+    if (warningTextEl) {
+      warningTextEl.innerHTML = `<strong>Warning:</strong> You have not set up paste history. Save this link now, or it will be lost forever when you leave this page. <a href="/history.html" style="color: inherit; text-decoration: underline;">Set up history</a>`;
+    }
+  } else {
+    if (warningTextEl) {
+      warningTextEl.textContent = "Save this link now. It has been securely added to your local paste history.";
+    }
+  }
+
   $("success-copy-btn").addEventListener("click", () => {
     copyToClipboard(url, $("success-copy-btn"));
   });
@@ -282,13 +294,28 @@ function showSuccess(url, hardDeleteAt, unlockAt, burnVal) {
 }
 
 // ─── History helpers ──────────────────────────────────────
-function saveHistory(entry) {
+async function saveHistory(entry) {
   try {
+    const pubB64 = localStorage.getItem("blinkbin_history_pub");
+    if (!pubB64) return; // Silent abort if no history set up
+
+    const pubKeyBytes = fromBase64(pubB64);
+    const { privateKey: ephPriv, publicKey: ephPub } = generateEphemeralECDH();
+    const aesKey = await ecdhDeriveAESKey(ephPriv, pubKeyBytes);
+    
+    const fullEntry = { ...entry, created_at: Math.floor(Date.now() / 1000) };
+    const ciphertext = await encrypt(JSON.stringify(fullEntry), aesKey);
+
+    const payload = {
+      ephemeral_public_key: toBase64(ephPub),
+      ciphertext
+    };
+
     const stored = localStorage.getItem("blinkbin_pending_history");
     const pending = stored ? JSON.parse(stored) : [];
-    pending.unshift({ ...entry, created_at: Math.floor(Date.now() / 1000) });
+    pending.unshift(payload);
     localStorage.setItem("blinkbin_pending_history", JSON.stringify(pending.slice(0, 50)));
-  } catch { /* storage unavailable */ }
+  } catch (err) { console.error("History save error:", err); /* storage unavailable or crypto error */ }
 }
 
 // ─── SVG icons (inline) ───────────────────────────────────

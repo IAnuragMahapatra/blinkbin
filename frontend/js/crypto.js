@@ -2,6 +2,8 @@
 // IV is always 12 bytes prepended to ciphertext in base64 payload
 
 // ─── Key generation ───────────────────────────────────────
+import { p256 } from "../vendor/noble-curves.bundle.js";
+
 export async function generateAESKey() {
   return crypto.subtle.generateKey(
     { name: "AES-GCM", length: 256 },
@@ -69,6 +71,49 @@ export async function derivePasswordKey(password, salt) {
     false,
     ["encrypt", "decrypt"],
   );
+}
+
+// ─── Deterministic ECDH (History) ─────────────────────────
+export async function deriveHistoryScalar(password, salt) {
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(password),
+    "PBKDF2",
+    false,
+    ["deriveBits"],
+  );
+  const bits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      salt,
+      iterations: PBKDF2_ITERATIONS,
+      hash: "SHA-256",
+    },
+    keyMaterial,
+    256 // 32 bytes
+  );
+  return new Uint8Array(bits);
+}
+
+export function getHistoryPublicKey(scalarBytes) {
+  return p256.getPublicKey(scalarBytes, true); // true = compressed
+}
+
+export async function ecdhDeriveAESKey(privateScalarBytes, peerPublicKeyBytes) {
+  const sharedSecret = p256.getSharedSecret(privateScalarBytes, peerPublicKeyBytes);
+  const hash = await crypto.subtle.digest("SHA-256", sharedSecret);
+  return crypto.subtle.importKey(
+    "raw", hash,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt", "decrypt"]
+  );
+}
+
+export function generateEphemeralECDH() {
+  const privateKey = p256.utils.randomPrivateKey();
+  const publicKey = p256.getPublicKey(privateKey, true);
+  return { privateKey, publicKey };
 }
 
 // wraps the raw AES key bytes with the password-derived key
