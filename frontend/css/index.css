@@ -1210,3 +1210,31 @@ code[class*="language-"] {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* History page CSP fixes */
+.badge-icon {
+  font-size: 10px;
+  padding: 1px 6px;
+}
+.nowrap {
+  white-space: nowrap;
+}
+.btn-sm {
+  padding: var(--sp-1) var(--sp-3);
+  min-height: 36px;
+  font-size: var(--text-xs);
+}
+.text-danger-action {
+  color: var(--color-danger);
+}
+
+.gate-icon {
+  color: var(--color-text-faint);
+}
+.burn-banner-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.text-left {
+  text-align: left;
+}

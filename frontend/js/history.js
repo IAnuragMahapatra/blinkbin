@@ -134,21 +134,18 @@ function renderTable(entries) {
 
   tbody.innerHTML = sorted.map((e, i) => `
     <tr>
-      <td>${escHtml(e.label || "Untitled")}${e.paste_password ? ` <span class="badge badge-amber" title="Password protected" style="font-size:10px;padding:1px 6px">🔒</span>` : ""}</td>
+      <td>${escHtml(e.label || "Untitled")}${e.paste_password ? ` <span class="badge badge-amber badge-icon" title="Password protected">🔒</span>` : ""}</td>
       <td><span class="badge badge-amber">${escHtml(e.language || "plaintext")}</span></td>
       <td>${formatDate(e.created_at)}</td>
-      <td style="white-space: nowrap">${e.unlock_at
+      <td class="nowrap">${e.unlock_at
           ? `Unlocks ${formatDate(e.unlock_at)}<br><span class="text-muted">Expires ${formatDate(e.expires_at)}</span>`
           : formatDate(e.expires_at)}</td>
       <td>
         <div class="flex flex-wrap gap-2">
-          <button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs)"
-            onclick="copyEntry(${i})">Copy</button>
-          <button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs)"
-            onclick="openEntry(${i})">Open</button>
-          ${e.paste_password ? `<button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs)" onclick="revealPassword(${i}, this)">Password</button>` : ""}
-          <button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs);color:var(--color-danger)"
-            onclick="deleteEntry(${i})">Remove</button>
+          <button class="btn btn-ghost btn-sm" data-action="copy" data-index="${i}">Copy</button>
+          <button class="btn btn-ghost btn-sm" data-action="open" data-index="${i}">Open</button>
+          ${e.paste_password ? `<button class="btn btn-ghost btn-sm" data-action="reveal" data-index="${i}">Password</button>` : ""}
+          <button class="btn btn-ghost btn-sm text-danger-action" data-action="delete" data-index="${i}">Remove</button>
         </div>
       </td>
     </tr>`).join("");
@@ -157,27 +154,34 @@ function renderTable(entries) {
   window._historyEntries = sorted;
 }
 
-window.copyEntry   = (i) => copyToClipboard(window._historyEntries[i].url);
-window.openEntry   = (i) => window.open(window._historyEntries[i].url, "_blank");
-window.revealPassword = (i, btn) => {
-  const pwd = window._historyEntries[i].paste_password;
-  if (!pwd) return;
-  if (btn.dataset.revealed === "1") {
-    btn.textContent = "Password";
-    btn.dataset.revealed = "0";
-  } else {
-    btn.textContent = pwd;
-    btn.dataset.revealed = "1";
-    // Hide the password after 10 seconds
-    setTimeout(() => { if (btn.dataset.revealed === "1") { btn.textContent = "Password"; btn.dataset.revealed = "0"; } }, 10_000);
+$("history-tbody").addEventListener("click", async (e) => {
+  const btn = e.target.closest("button[data-action]");
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const i = parseInt(btn.dataset.index, 10);
+  
+  if (action === "copy") {
+    copyToClipboard(window._historyEntries[i].url);
+  } else if (action === "open") {
+    window.open(window._historyEntries[i].url, "_blank");
+  } else if (action === "reveal") {
+    const pwd = window._historyEntries[i].paste_password;
+    if (!pwd) return;
+    if (btn.dataset.revealed === "1") {
+      btn.textContent = "Password";
+      btn.dataset.revealed = "0";
+    } else {
+      btn.textContent = pwd;
+      btn.dataset.revealed = "1";
+      setTimeout(() => { if (btn.dataset.revealed === "1") { btn.textContent = "Password"; btn.dataset.revealed = "0"; } }, 10_000);
+    }
+  } else if (action === "delete") {
+    const entries = await loadEntries();
+    entries.splice(i, 1);
+    await saveEntries(entries);
+    await showHistory();
   }
-};
-window.deleteEntry = async (i) => {
-  const entries = await loadEntries();
-  entries.splice(i, 1);
-  await saveEntries(entries);
-  await showHistory();
-};
+});
 
 // Allow sorting by clicking headers
 document.querySelectorAll(".history-table th[data-col]").forEach((th) => {
