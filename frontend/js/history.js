@@ -137,17 +137,19 @@ function renderTable(entries) {
       <td>${escHtml(e.label || "Untitled")}${e.paste_password ? ` <span class="badge badge-amber" title="Password protected" style="font-size:10px;padding:1px 6px">🔒</span>` : ""}</td>
       <td><span class="badge badge-amber">${escHtml(e.language || "plaintext")}</span></td>
       <td>${formatDate(e.created_at)}</td>
-      <td>${e.unlock_at
-          ? `Unlocks ${formatDate(e.unlock_at)} · Expires ${formatDate(e.expires_at)}`
+      <td style="white-space: nowrap">${e.unlock_at
+          ? `Unlocks ${formatDate(e.unlock_at)}<br><span class="text-muted">Expires ${formatDate(e.expires_at)}</span>`
           : formatDate(e.expires_at)}</td>
-      <td class="flex gap-2">
-        <button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs)"
-          onclick="copyEntry(${i})">Copy</button>
-        <button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs)"
-          onclick="openEntry(${i})">Open</button>
-        ${e.paste_password ? `<button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs)" onclick="revealPassword(${i}, this)">Password</button>` : ""}
-        <button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs);color:var(--color-danger)"
-          onclick="deleteEntry(${i})">Remove</button>
+      <td>
+        <div class="flex flex-wrap gap-2">
+          <button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs)"
+            onclick="copyEntry(${i})">Copy</button>
+          <button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs)"
+            onclick="openEntry(${i})">Open</button>
+          ${e.paste_password ? `<button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs)" onclick="revealPassword(${i}, this)">Password</button>` : ""}
+          <button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs);color:var(--color-danger)"
+            onclick="deleteEntry(${i})">Remove</button>
+        </div>
       </td>
     </tr>`).join("");
 
