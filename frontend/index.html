@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BlinkBin — Share Secrets Without a Trace</title>
+    <title>BlinkBin | Share Secrets Without a Trace</title>
     <meta
       name="description"
-      content="Zero-knowledge ephemeral secret sharing. Server stores only ciphertext — never plaintext, never keys. Encrypted in your browser."
+      content="Secure and temporary secret sharing. The server only stores encrypted data. Everything is encrypted in your browser."
     />
 
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -16,7 +16,6 @@
     <link rel="stylesheet" href="/css/index.css?v=3" />
   </head>
   <body class="page">
-    <!-- NavBar -->
     <nav class="nav" role="navigation" aria-label="Main navigation">
       <a href="/" class="nav-logo" aria-label="BlinkBin home"
         >Blink<span>Bin</span></a
@@ -28,11 +27,10 @@
     </nav>
 
     <main>
+      <h1 class="sr-only">Create a Secure Paste</h1>
       <div class="layout-create">
-        <!-- Left: options panel -->
         <aside id="form-section" aria-label="Paste options">
           <form id="create-form" novalidate>
-            <!-- Language -->
             <div class="form-group">
               <label class="form-label" for="language">Language</label>
               <select class="form-select" id="language" name="language">
@@ -56,7 +54,6 @@
               </select>
             </div>
 
-            <!-- Password -->
             <div class="form-group mt-6">
               <label class="form-label" for="password"
                 >Password
@@ -92,12 +89,10 @@
                 </button>
               </div>
               <p class="form-helper">
-                Password gates who among link-holders can read this. Encryption
-                already protects it from the server.
+                A password controls who can read this link. The server cannot read your data.
               </p>
             </div>
 
-            <!-- Dead Drop -->
             <div class="form-group mt-6">
               <p class="form-label">
                 Dead Drop <span class="text-faint fw-400">(time-lock)</span>
@@ -119,12 +114,10 @@
                 aria-label="Unlock datetime"
               />
               <p class="form-helper mt-2">
-                Like a time capsule, it is mathematically impossible to open
-                before the moment you choose.
+                Like a time capsule, it cannot be opened before the time you choose.
               </p>
             </div>
 
-            <!-- Burn -->
             <div class="form-group mt-6">
               <p class="form-label">Expiry</p>
               <div
@@ -132,24 +125,24 @@
                 role="radiogroup"
                 aria-label="Burn setting"
               >
-                <label class="burn-option selected">
-                  <input type="radio" name="burn" value="never" checked />
+                <label class="burn-option selected" for="burn-never">
+                  <input type="radio" name="burn" value="never" id="burn-never" checked />
                   <div>
                     <div class="burn-option-label">Never burn</div>
                     <div class="burn-option-sub">Removed after 30 days</div>
                   </div>
                 </label>
 
-                <label class="burn-option">
-                  <input type="radio" name="burn" value="read" />
+                <label class="burn-option" for="burn-read">
+                  <input type="radio" name="burn" value="read" id="burn-read" />
                   <div>
                     <div class="burn-option-label">Burn after read</div>
                     <div class="burn-option-sub">Deleted on first view</div>
                   </div>
                 </label>
 
-                <label class="burn-option">
-                  <input type="radio" name="burn" value="ttl" />
+                <label class="burn-option" for="burn-ttl">
+                  <input type="radio" name="burn" value="ttl" id="burn-ttl" />
                   <div>
                     <div class="burn-option-label">Burn after time</div>
                     <div class="burn-option-sub">Set a custom TTL</div>
@@ -157,25 +150,24 @@
                 </label>
               </div>
 
-              <!-- TTL picker -->
               <div id="ttl-section" hidden>
                 <p id="dead-drop-ttl-note" class="form-helper mt-2" hidden>
                   TTL countdown starts from unlock date, not creation date.
                 </p>
                 <div class="ttl-presets" role="group" aria-label="TTL presets">
-                  <button type="button" class="ttl-preset" data-ttl="10m">
+                  <button type="button" class="ttl-preset" data-ttl="10m" id="ttl-preset-10m">
                     10m
                   </button>
-                  <button type="button" class="ttl-preset" data-ttl="1h">
+                  <button type="button" class="ttl-preset" data-ttl="1h" id="ttl-preset-1h">
                     1h
                   </button>
-                  <button type="button" class="ttl-preset" data-ttl="1d">
+                  <button type="button" class="ttl-preset" data-ttl="1d" id="ttl-preset-1d">
                     1d
                   </button>
-                  <button type="button" class="ttl-preset" data-ttl="1w">
+                  <button type="button" class="ttl-preset" data-ttl="1w" id="ttl-preset-1w">
                     1w
                   </button>
-                  <button type="button" class="ttl-preset" data-ttl="custom">
+                  <button type="button" class="ttl-preset" data-ttl="custom" id="ttl-preset-custom">
                     Custom
                   </button>
                 </div>
@@ -192,11 +184,9 @@
               </div>
             </div>
 
-            <!-- Label and Submit moved to right section -->
           </form>
         </aside>
 
-        <!-- Right: editor -->
         <section id="editor-section" aria-label="Paste content">
           <div class="editor-group">
             <div class="editor-header">
@@ -238,9 +228,7 @@
           </div>
         </section>
 
-        <!-- Right: submit -->
         <div id="action-section">
-          <!-- Label -->
           <div class="form-group">
             <label class="form-label" for="label"
               >Label <span class="text-faint fw-400">(optional)</span></label
@@ -251,7 +239,7 @@
               id="label"
               name="label"
               form="create-form"
-              placeholder="e.g. prod DB creds — Q4"
+              placeholder="e.g. prod DB creds - Q4"
               maxlength="100"
             />
             <p class="form-helper">
@@ -270,7 +258,7 @@
         </div>
       </div>
 
-      <!-- Success section (hidden until paste created) -->
+      <!-- Hidden success screen shown after paste creation -->
       <div class="layout-well" id="success-section" hidden>
         <div class="success-card">
           <div>
@@ -332,8 +320,7 @@
               <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
             <span id="success-warning-text"
-              >Save this link now. Once you leave this page, it cannot be
-              recovered unless you have paste history enabled.</span
+              >Save this link now. You cannot recover it once you leave this page unless you enable paste history.</span
             >
           </div>
 

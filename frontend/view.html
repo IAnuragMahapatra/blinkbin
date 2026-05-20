@@ -3,25 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BlinkBin — View Paste</title>
-  <meta name="description" content="View your encrypted paste — decrypted locally in your browser." />
+  <title>BlinkBin | View Paste</title>
+  <meta name="description" content="View your encrypted paste. It is decrypted locally in your browser." />
   <meta name="robots" content="noindex, nofollow" />
 
   <link rel="icon" type="image/png" href="/favicon.png" />
-  <!-- Prism.js (vendored) -->
   <link rel="stylesheet" href="/vendor/prism.css" />
   <link rel="stylesheet" href="/css/index.css" />
 </head>
 <body class="page">
 
-  <!-- Minimal nav: logo only — view page is a destination -->
+  <!-- Simple navigation since this page is a standalone destination -->
   <nav class="nav" role="navigation" aria-label="Site navigation">
     <a href="/" class="nav-logo" aria-label="BlinkBin — create a new paste">Blink<span>Bin</span></a>
   </nav>
 
   <main class="layout-well">
+    <h1 class="sr-only">View Paste</h1>
 
-    <!-- LOADING -->
     <div id="state-loading" role="status" aria-live="polite">
       <div class="loading-state">
         <div class="spinner" aria-hidden="true"></div>
@@ -29,7 +28,6 @@
       </div>
     </div>
 
-    <!-- LOCKED (Dead Drop) -->
     <div id="state-locked" hidden>
       <div class="locked-state">
         <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -37,7 +35,7 @@
           <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
         </svg>
         <div>
-          <h1 class="locked-title">This paste is locked</h1>
+          <h2 class="locked-title" id="locked-title">This paste is locked</h2>
           <p class="locked-subtitle mt-2">
             Unlocks on <strong id="locked-unlock-date"></strong>
           </p>
@@ -47,12 +45,11 @@
           <p class="countdown-label text-center" id="countdown-label">until unlock</p>
         </div>
         <p class="text-sm text-faint" style="max-width:36ch;text-align:center">
-          This paste uses drand time-lock encryption. It is mathematically impossible to decrypt before the unlock time.
+          This paste uses drand time-lock encryption. It cannot be decrypted before the unlock time.
         </p>
       </div>
     </div>
 
-    <!-- PASSWORD -->
     <div id="state-password" hidden>
       <div class="password-prompt">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -60,7 +57,7 @@
           <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
         </svg>
         <div>
-          <h1 class="password-prompt-title">Password required</h1>
+          <h2 class="password-prompt-title" id="password-title">Password required</h2>
           <p class="text-sm text-muted mt-2">This paste is password protected. Enter the password to decrypt.</p>
         </div>
         <form class="password-prompt-form" id="password-form" novalidate>
@@ -75,10 +72,8 @@
       </div>
     </div>
 
-    <!-- READABLE -->
     <div id="state-readable" hidden>
 
-      <!-- Burn warning -->
       <div class="burn-banner" id="burn-banner" role="alert" hidden>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px" aria-hidden="true">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -92,7 +87,7 @@
         <p class="expiry-info" id="expiry-info"></p>
 
         <div class="flex gap-4 items-center" style="flex-wrap:wrap">
-          <!-- Markdown toggle (hidden for non-markdown) -->
+          <!-- Markdown toggle buttons, hidden if paste is plaintext -->
           <div class="markdown-toggle" id="markdown-toggle" hidden role="group" aria-label="View mode">
             <button class="markdown-toggle-btn" id="toggle-rendered">Rendered</button>
             <button class="markdown-toggle-btn" id="toggle-raw">Raw</button>
@@ -112,18 +107,16 @@
 
     </div>
 
-    <!-- NOT FOUND -->
     <div id="state-not-found" hidden>
       <div class="not-found">
         <p class="not-found-code" aria-hidden="true">404</p>
         <p class="not-found-msg">This paste does not exist, has already been read, or has expired.</p>
-        <a href="/" class="btn btn-ghost mt-4">Create a new paste</a>
+        <a href="/" class="btn btn-ghost mt-4" id="create-new-paste-btn">Create a new paste</a>
       </div>
     </div>
 
   </main>
 
-  <!-- Vendor: Prism + marked -->
   <script src="/vendor/prism.js"></script>
   <script src="/vendor/marked.min.js"></script>
   <script src="/vendor/timelock.bundle.js"></script>
