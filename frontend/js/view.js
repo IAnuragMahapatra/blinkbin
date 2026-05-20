@@ -11,7 +11,6 @@ import {
 
 const $ = (id) => document.getElementById(id);
 
-//  State machine
 // States: LOADING | LOCKED | PASSWORD | READABLE | NOT_FOUND
 
 const states = {
@@ -28,7 +27,6 @@ function showState(name) {
   });
 }
 
-//  Init
 async function init() {
   showState("loading");
 
@@ -63,7 +61,6 @@ async function init() {
   }
 }
 
-//  LOCKED state
 function showLocked(lockedData, fragment, pasteId) {
   showState("locked");
 
@@ -75,7 +72,7 @@ function showLocked(lockedData, fragment, pasteId) {
   $("locked-unlock-date").textContent = formatDatetime(unlockUnix);
 
   startCountdown(unlockUnix, countdownEl, labelEl, async () => {
-    // countdown reached zero — re-fetch
+    // countdown reached zero -> re-fetch
     showState("loading");
     await new Promise((r) => setTimeout(r, 2000)); // brief wait for round to propagate
     try {
@@ -96,14 +93,13 @@ function showLocked(lockedData, fragment, pasteId) {
   });
 }
 
-//  READABLE state
 async function handleReadable(data, fragment) {
   const { ciphertext, language, burn_on_read, hard_delete_at, round_id } = data;
 
   const parsed = parseFragment(fragment);
   let aesKey;
 
-  // dead drop — IBE decrypt first
+  // dead drop - IBE decrypt first
   if (round_id) {
     const lockedBytes = parsed.type === "password"
       ? parsed.payload   // salt.lockedKey
@@ -157,7 +153,6 @@ async function handleReadable(data, fragment) {
   }
 }
 
-//  PASSWORD state
 function showPasswordPrompt(onSubmit) {
   showState("password");
 
@@ -183,13 +178,12 @@ function showPasswordPrompt(onSubmit) {
   });
 }
 
-//  Render content
 async function renderContent(ciphertext, aesKey, language, burnOnRead, hardDeleteAt) {
   let plaintext;
   try {
     plaintext = await decrypt(ciphertext, aesKey);
   } catch {
-    toastError("Decryption failed — key may be incorrect");
+    toastError("Decryption failed. The key may be incorrect.");
     showState("notFound");
     return;
   }
@@ -265,5 +259,4 @@ function escHtml(str) {
     .replace(/"/g, "&quot;");
 }
 
-// ─── Start ────────────────────────────────────────────────
 init();

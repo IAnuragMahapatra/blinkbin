@@ -1,8 +1,7 @@
 export function setupCustomSelect(selectEl) {
-  // Hide the original select
+  // Hide the native select menu
   selectEl.style.display = 'none';
   
-  // Create the custom wrapper
   const wrapper = document.createElement('div');
   wrapper.className = 'custom-select-wrapper';
   wrapper.tabIndex = 0; // make it focusable
@@ -16,10 +15,8 @@ export function setupCustomSelect(selectEl) {
   wrapper.appendChild(selectedDisplay);
   wrapper.appendChild(dropdown);
   
-  // Insert custom select after original select
   selectEl.parentNode.insertBefore(wrapper, selectEl.nextSibling);
   
-  // Populate options
   const options = Array.from(selectEl.options);
   
   function renderOptions() {
@@ -46,19 +43,18 @@ export function setupCustomSelect(selectEl) {
   
   renderOptions();
   
-  // Toggle dropdown
   wrapper.addEventListener('click', () => {
     wrapper.classList.toggle('open');
   });
   
-  // Close on outside click
+  // Close the menu when clicking outside
   document.addEventListener('click', (e) => {
     if (!wrapper.contains(e.target)) {
       wrapper.classList.remove('open');
     }
   });
 
-  // Handle keyboard navigation
+  // Support keyboard navigation
   wrapper.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();

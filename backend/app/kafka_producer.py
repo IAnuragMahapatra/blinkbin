@@ -33,5 +33,5 @@ async def publish(event: dict, paste_id: str) -> None:
     try:
         await _producer.send_and_wait(KAFKA_TOPIC, value=event, key=paste_id)
     except Exception as exc:
-        # non-fatal — Redis TTL and hard_delete are backstops
+        # This is not a fatal error since Redis will still expire the paste
         log.error("Kafka publish failed: %s", exc)

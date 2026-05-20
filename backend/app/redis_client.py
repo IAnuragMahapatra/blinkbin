@@ -39,7 +39,7 @@ async def get_paste(paste_id: str) -> dict | None:
 
 
 async def get_and_delete_paste(paste_id: str) -> dict | None:
-    # atomic fetch + delete — no race condition possible
+    # Fetch and delete the paste to prevent race conditions
     r = get_redis()
     raw = await r.getdel(_key(paste_id))
     return json.loads(raw) if raw else None

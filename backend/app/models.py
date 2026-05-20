@@ -15,7 +15,7 @@ class CreatePasteRequest(BaseModel):
     @field_validator("ciphertext")
     @classmethod
     def ciphertext_size(cls, v: str) -> str:
-        # ~1MB base64 limit
+        # Ensure the payload stays under 1MB
         if len(v.encode()) > 1_048_576:
             raise ValueError("ciphertext exceeds 1MB limit")
         return v

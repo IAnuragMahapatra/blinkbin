@@ -9,7 +9,7 @@ from app.redis_client import delete_paste
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 log = logging.getLogger(__name__)
 
-# tracks scheduled deletion tasks — key: paste_id
+# Keep track of pending deletions
 pending: dict[str, asyncio.Task] = {}
 
 
@@ -42,8 +42,7 @@ async def consume() -> None:
             if not paste_id or not delete_at:
                 continue
 
-            # cancel existing task for same paste_id before scheduling a new one
-            # (handles duplicate events across restarts)
+            # Cancel duplicate tasks before creating new ones
             if paste_id in pending:
                 existing = pending[paste_id]
                 if not existing.done():
@@ -71,7 +70,7 @@ async def main() -> None:
 
     await shutdown.wait()
 
-    # graceful: cancel pending DEL tasks and the consumer
+    # Cancel running tasks and shut down
     for task in pending.values():
         task.cancel()
     consume_task.cancel()

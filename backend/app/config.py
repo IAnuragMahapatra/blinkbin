@@ -1,6 +1,6 @@
 import os
 
-# single source of truth — change here only
+# This is the single source of truth for the expiry cap
 HARD_EXPIRY_DAYS = 30
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379")

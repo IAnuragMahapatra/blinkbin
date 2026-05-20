@@ -10,7 +10,6 @@ import { setupCustomSelect } from "./custom-select.js";
 
 const $ = (id) => document.getElementById(id);
 
-//  Form elements
 const editorEl      = $("editor");
 const sizeCounterEl = $("size-counter");
 const langEl        = $("language");
@@ -35,20 +34,18 @@ const editorContainer = $("editor-container");
 const mdPreview     = $("md-preview");
 const deadDropNote  = $("dead-drop-ttl-note");
 
-//  State
-let selectedTTL = null; // null | seconds
+let selectedTTL = null; // Either null or a number of seconds
 
-//  Initialize custom UI
 setupCustomSelect(langEl);
 let fpInstance = null;
 if (window.flatpickr) {
   fpInstance = window.flatpickr(deadDropInput, {
     enableTime: true,
     minDate: new Date(Date.now() + 60_000),
-    disableMobile: true, // force flatpickr UI on mobile to avoid native huge popups
-    monthSelectorType: "static", // Removes the native dropdown with the unstyleable blue hover
+    disableMobile: true, // Keep the Flatpickr UI on mobile devices
+    monthSelectorType: "static", // Remove the native dropdown styling
     onChange: function(selectedDates, dateStr, instance) {
-      // Prevent Flatpickr from auto-highlighting the hour input when a date is clicked
+      // Stop the hour input from highlighting when you click a date
       if (instance.timeContainer && instance.timeContainer.contains(document.activeElement)) {
         document.activeElement.blur();
       }
@@ -56,7 +53,6 @@ if (window.flatpickr) {
   });
 }
 
-//  Size counter
 editorEl.addEventListener("input", () => {
   const bytes = new TextEncoder().encode(editorEl.value).length;
   const kb = (bytes / 1024).toFixed(0);
@@ -65,7 +61,7 @@ editorEl.addEventListener("input", () => {
   if (bytes >= SIZE_HARD_BYTES) {
     sizeCounterEl.className = "size-counter full";
     editorEl.className = "paste-editor full";
-    // trim to keep under limit
+    // Stop typing when the limit is reached
     while (new TextEncoder().encode(editorEl.value).length > SIZE_HARD_BYTES) {
       editorEl.value = editorEl.value.slice(0, -1);
     }
@@ -78,14 +74,12 @@ editorEl.addEventListener("input", () => {
   }
 });
 
-//  Password visibility toggle
 passwordTogEl.addEventListener("click", () => {
   const isText = passwordEl.type === "text";
   passwordEl.type = isText ? "password" : "text";
   passwordTogEl.innerHTML = isText ? EYE_ICON : EYE_OFF_ICON;
 });
 
-//  Language → preview
 langEl.addEventListener("change", () => {
   renderPreview();
 });
@@ -138,12 +132,11 @@ function escHtml(str) {
     .replace(/"/g, "&quot;");
 }
 
-// ─── Dead Drop toggle ─────────────────────────────────────
 deadDropCheck.addEventListener("change", () => {
   const enabled = deadDropCheck.checked;
   deadDropInput.disabled = !enabled;
   if (enabled) {
-    // min = now + 1 minute
+    // Require at least 1 minute in the future
     const minDt = new Date(Date.now() + 60_000);
     deadDropInput.min = minDt.toISOString().slice(0, 16);
     if (fpInstance) {
@@ -153,7 +146,6 @@ deadDropCheck.addEventListener("change", () => {
   if (deadDropNote) deadDropNote.hidden = !enabled;
 });
 
-// ─── Burn radio ───────────────────────────────────────────
 burnGroup.forEach((radio) => {
   radio.addEventListener("change", () => {
     document.querySelectorAll(".burn-option").forEach((opt) => {
@@ -166,7 +158,6 @@ burnGroup.forEach((radio) => {
   });
 });
 
-// ─── TTL presets ──────────────────────────────────────────
 const TTL_MAP = { "10m": 600, "1h": 3600, "1d": 86400, "1w": 604800 };
 
 ttlPresets.forEach((btn) => {
@@ -190,7 +181,6 @@ ttlCustomEl?.addEventListener("change", () => {
   selectedTTL = Math.min(Math.max(v, 60), max);
 });
 
-// ─── Form submit ──────────────────────────────────────────
 formEl.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -203,7 +193,7 @@ formEl.addEventListener("submit", async (e) => {
   const burnVal     = document.querySelector('input[name="burn"]:checked')?.value || "never";
   const isDeadDrop  = deadDropCheck.checked && deadDropInput.value;
 
-  // validate dead drop datetime
+  // Check the unlock time
   let unlockUnix = null;
   let roundId    = null;
   if (isDeadDrop) {
@@ -214,7 +204,7 @@ formEl.addEventListener("submit", async (e) => {
     roundId = computeRound(unlockUnix);
   }
 
-  // validate TTL
+  // Check the TTL
   let burnAfterTTL = null;
   if (burnVal === "ttl") {
     if (!selectedTTL) { toastError("Select a TTL duration"); return; }
@@ -225,14 +215,11 @@ formEl.addEventListener("submit", async (e) => {
   submitBtn.textContent = "Encrypting...";
 
   try {
-    // 1. generate AES key
     const aesKey     = await generateAESKey();
     const aesKeyBytes = await exportKey(aesKey);
 
-    // 2. encrypt content
     const ciphertext = await encrypt(content, aesKey);
 
-    // 3. build fragment
     let fragment;
     let payloadBytes = aesKeyBytes;
 
@@ -242,24 +229,22 @@ formEl.addEventListener("submit", async (e) => {
       const wrapped    = await wrapKey(aesKeyBytes, pswdKey);
       payloadBytes     = wrapped;
       if (isDeadDrop) {
-        // password + dead drop: IBE-encrypt the wrapped key
+        // Encrypt the wrapped key if both password and time-lock are used
         const locked = await ibeEncrypt(wrapped, roundId);
         fragment = buildFragment(null, salt, locked);
       } else {
         fragment = buildFragment(null, salt, wrapped);
       }
     } else if (isDeadDrop) {
-      // dead drop, no password: IBE-encrypt raw AES key
+      // Time-lock the raw key if there is no password
       const locked = await ibeEncrypt(aesKeyBytes, roundId);
       fragment = toBase64(locked); // no dot, no salt
     } else {
-      // plain: just the key
       fragment = buildFragment(aesKeyBytes);
     }
 
     submitBtn.textContent = "Creating paste...";
 
-    // 4. POST to API
     const res = await fetch(`${API_BASE}/paste`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -281,10 +266,8 @@ formEl.addEventListener("submit", async (e) => {
     const { paste_id, hard_delete_at, unlock_at } = await res.json();
     const url = `${location.origin}/p/${paste_id}#${fragment}`;
 
-    // 5. save to history
     await saveHistory({ paste_id, url, label, language, hard_delete_at, unlock_at, paste_password: password || null });
 
-    // 6. show success
     showSuccess(url, hard_delete_at, unlock_at, burnVal);
 
   } catch (err) {
@@ -295,7 +278,6 @@ formEl.addEventListener("submit", async (e) => {
   }
 });
 
-// ─── Success view ─────────────────────────────────────────
 function showSuccess(url, hardDeleteAt, unlockAt, burnVal) {
   layoutCreate.hidden = true;
   successEl.hidden = false;
@@ -332,11 +314,10 @@ function showSuccess(url, hardDeleteAt, unlockAt, burnVal) {
   });
 }
 
-// ─── History helpers ──────────────────────────────────────
 async function saveHistory(entry) {
   try {
     const pubB64 = localStorage.getItem("blinkbin_history_pub");
-    if (!pubB64) return; // Silent abort if no history set up
+    if (!pubB64) return; // Stop if history is not set up
 
     const pubKeyBytes = fromBase64(pubB64);
     const { privateKey: ephPriv, publicKey: ephPub } = generateEphemeralECDH();
@@ -354,9 +335,8 @@ async function saveHistory(entry) {
     const pending = stored ? JSON.parse(stored) : [];
     pending.unshift(payload);
     localStorage.setItem("blinkbin_pending_history", JSON.stringify(pending.slice(0, 50)));
-  } catch (err) { console.error("History save error:", err); /* storage unavailable or crypto error */ }
+  } catch (err) { console.error("History save error:", err); /* Catch storage or crypto errors */ }
 }
 
-// ─── SVG icons (inline) ───────────────────────────────────
 const EYE_ICON = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
 const EYE_OFF_ICON = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;

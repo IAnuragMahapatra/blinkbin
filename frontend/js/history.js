@@ -10,12 +10,11 @@ const STORAGE_KEY_SALT = "blinkbin_history_salt";
 const STORAGE_KEY_DATA = "blinkbin_history_data";
 const PENDING_KEY      = "blinkbin_pending_history";
 
-// history is always encrypted — no opt-out
+// History is always encrypted
 let historyKey = null; // AES CryptoKey for session
 
 const $ = (id) => document.getElementById(id);
 
-//  Init
 async function init() {
   const hasHistory = localStorage.getItem(STORAGE_KEY_DATA);
   const hasSalt    = localStorage.getItem(STORAGE_KEY_SALT);
@@ -27,7 +26,6 @@ async function init() {
   }
 }
 
-//  First-time setup
 function showSetupGate() {
   const gate = $("history-gate");
   gate.hidden = false;
@@ -61,10 +59,10 @@ function showSetupGate() {
     localStorage.setItem(STORAGE_KEY_SALT, toBase64(salt));
     localStorage.setItem("blinkbin_history_pub", toBase64(pubKeyBytes));
 
-    // initialize with empty history
+    // Initialize with empty history
     await saveEntries([]);
 
-    // import any pending history from create page
+    // Import pending history from create page
     await importPending(scalar);
 
     gate.hidden = true;
@@ -72,7 +70,6 @@ function showSetupGate() {
   });
 }
 
-//  Unlock gate
 function showUnlockGate() {
   const gate = $("history-gate");
   gate.hidden = false;
@@ -94,7 +91,7 @@ function showUnlockGate() {
     try {
       const scalar = await deriveHistoryScalar(pwd, salt);
       historyKey = await derivePasswordKey(pwd, salt);
-      // verify by decrypting
+      // Verify by decrypting
       await loadEntries();
       gate.hidden = true;
       await importPending(scalar);
@@ -107,7 +104,6 @@ function showUnlockGate() {
   });
 }
 
-//  Show table
 async function showHistory() {
   const entries = await loadEntries();
   const tableSection = $("history-section");
@@ -125,7 +121,6 @@ async function showHistory() {
   renderTable(entries);
 }
 
-//  Render table
 let sortCol = "created_at";
 let sortAsc = false;
 
@@ -156,7 +151,7 @@ function renderTable(entries) {
       </td>
     </tr>`).join("");
 
-  // expose entry access globally for inline handlers
+  // Expose entries globally for the table handlers
   window._historyEntries = sorted;
 }
 
@@ -171,7 +166,7 @@ window.revealPassword = (i, btn) => {
   } else {
     btn.textContent = pwd;
     btn.dataset.revealed = "1";
-    // auto-hide after 10 seconds
+    // Hide the password after 10 seconds
     setTimeout(() => { if (btn.dataset.revealed === "1") { btn.textContent = "Password"; btn.dataset.revealed = "0"; } }, 10_000);
   }
 };
@@ -182,7 +177,7 @@ window.deleteEntry = async (i) => {
   await showHistory();
 };
 
-// sortable column headers
+// Allow sorting by clicking headers
 document.querySelectorAll(".history-table th[data-col]").forEach((th) => {
   th.addEventListener("click", async () => {
     if (sortCol === th.dataset.col) {
@@ -196,7 +191,6 @@ document.querySelectorAll(".history-table th[data-col]").forEach((th) => {
   });
 });
 
-//  Encrypted storage
 async function saveEntries(entries) {
   const json       = JSON.stringify(entries);
   const encrypted  = await encrypt(json, historyKey);
@@ -210,7 +204,6 @@ async function loadEntries() {
   return JSON.parse(json);
 }
 
-//  Import pending from create page
 async function importPending(scalar) {
   const raw = localStorage.getItem(PENDING_KEY);
   if (!raw) return;
@@ -219,7 +212,7 @@ async function importPending(scalar) {
     const decryptedPending = [];
     for (const p of pending) {
       if (p.paste_id) {
-        // legacy plaintext pending — we will just discard it to avoid storing plaintext
+        // Discard old plaintext entries to protect user data
         continue;
       }
       try {
@@ -243,7 +236,7 @@ async function importPending(scalar) {
     const merged = [...decryptedPending, ...existing];
     await saveEntries(merged);
     localStorage.removeItem(PENDING_KEY);
-  } catch { /* malformed pending — discard */ }
+  } catch { /* Catch invalid entries */ }
 }
 
 function escHtml(str) {
@@ -253,5 +246,4 @@ function escHtml(str) {
     .replace(/>/g, "&gt;");
 }
 
-//  Start
 init();

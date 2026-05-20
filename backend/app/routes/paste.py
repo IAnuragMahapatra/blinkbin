@@ -25,7 +25,7 @@ async def create_paste(req: CreatePasteRequest):
     now = int(time.time())
     paste_id = generate_id()
 
-    # Dead Drop: hard cap starts from unlock date, not creation date
+    # Start the expiry cap from the unlock date
     if req.unlock_at_unix:
         hard_delete_at = req.unlock_at_unix + HARD_EXPIRY_DAYS * 86400
     else:
@@ -42,24 +42,24 @@ async def create_paste(req: CreatePasteRequest):
         "unlock_at_unix": req.unlock_at_unix,
     }
 
-    # compute Redis TTL — for Dead Drop, countdown starts from unlock time
+    # Compute Redis TTL for the paste
     redis_ttl = None
     if req.burn_after_ttl_seconds:
         if req.unlock_at_unix:
-            # TTL starts from unlock, so expire at unlock + ttl
+            # The TTL begins when the paste unlocks
             redis_ttl = (req.unlock_at_unix - now) + req.burn_after_ttl_seconds
         else:
             redis_ttl = req.burn_after_ttl_seconds
 
     await store_paste(paste_id, data, ttl=redis_ttl)
 
-    # publish hard_delete event for every paste — unconditional backstop
+    # Publish hard_delete event for every paste
     await publish(
         {"event": "hard_delete", "paste_id": paste_id, "delete_at": hard_delete_at},
         paste_id,
     )
 
-    # publish burn_after_ttl event if applicable
+    # Publish burn_after_ttl event if applicable
     if req.burn_after_ttl_seconds:
         if req.unlock_at_unix:
             delete_at = req.unlock_at_unix + req.burn_after_ttl_seconds
@@ -91,12 +91,12 @@ async def read_paste(paste_id: str, response: Response):
     unlock_at = data.get("unlock_at_unix")
     round_id = data.get("round_id")
 
-    # 423 if Dead Drop hasn't unlocked yet
+    # Prevent early access to locked pastes
     if round_id and unlock_at and unlock_at > now:
         response.status_code = 423
         return LockedResponse(round_id=round_id, unlock_at=unlock_at)
 
-    # atomic delete on burn-on-read
+    # Handle burn-on-read pastes
     if data["burn_on_read"]:
         fetched = await get_and_delete_paste(paste_id)
         if not fetched:
