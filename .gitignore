@@ -1,0 +1,7 @@
+.design-state.json
+.agents/
+internal-docs/
+node_modules/
+frontend/node_modules/
+*.pem
+*.ps1
