@@ -139,7 +139,7 @@ function renderTable(entries) {
 
   tbody.innerHTML = sorted.map((e, i) => `
     <tr>
-      <td>${escHtml(e.label || "Untitled")}</td>
+      <td>${escHtml(e.label || "Untitled")}${e.paste_password ? ` <span class="badge badge-amber" title="Password protected" style="font-size:10px;padding:1px 6px">🔒</span>` : ""}</td>
       <td><span class="badge badge-amber">${escHtml(e.language || "plaintext")}</span></td>
       <td>${formatDate(e.created_at)}</td>
       <td>${e.unlock_at
@@ -150,6 +150,7 @@ function renderTable(entries) {
           onclick="copyEntry(${i})">Copy</button>
         <button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs)"
           onclick="openEntry(${i})">Open</button>
+        ${e.paste_password ? `<button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs)" onclick="revealPassword(${i}, this)">Password</button>` : ""}
         <button class="btn btn-ghost" style="padding:var(--sp-1) var(--sp-3);min-height:36px;font-size:var(--text-xs);color:var(--color-danger)"
           onclick="deleteEntry(${i})">Remove</button>
       </td>
@@ -161,6 +162,19 @@ function renderTable(entries) {
 
 window.copyEntry   = (i) => copyToClipboard(window._historyEntries[i].url);
 window.openEntry   = (i) => window.open(window._historyEntries[i].url, "_blank");
+window.revealPassword = (i, btn) => {
+  const pwd = window._historyEntries[i].paste_password;
+  if (!pwd) return;
+  if (btn.dataset.revealed === "1") {
+    btn.textContent = "Password";
+    btn.dataset.revealed = "0";
+  } else {
+    btn.textContent = pwd;
+    btn.dataset.revealed = "1";
+    // auto-hide after 10 seconds
+    setTimeout(() => { if (btn.dataset.revealed === "1") { btn.textContent = "Password"; btn.dataset.revealed = "0"; } }, 10_000);
+  }
+};
 window.deleteEntry = async (i) => {
   const entries = await loadEntries();
   entries.splice(i, 1);
@@ -214,13 +228,14 @@ async function importPending(scalar) {
         const jsonStr = await decrypt(p.ciphertext, aesKey);
         const entry = JSON.parse(jsonStr);
         decryptedPending.push({
-          paste_id:   entry.paste_id,
-          url:        entry.url,
-          label:      entry.label,
-          language:   entry.language,
-          created_at: entry.created_at,
-          expires_at: entry.hard_delete_at,
-          unlock_at:  entry.unlock_at || null,
+          paste_id:      entry.paste_id,
+          url:           entry.url,
+          label:         entry.label,
+          language:      entry.language,
+          created_at:    entry.created_at,
+          expires_at:    entry.hard_delete_at,
+          unlock_at:     entry.unlock_at || null,
+          paste_password: entry.paste_password || null,
         });
       } catch (err) { console.error("Failed to decrypt pending entry:", err); }
     }

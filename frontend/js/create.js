@@ -282,7 +282,7 @@ formEl.addEventListener("submit", async (e) => {
     const url = `${location.origin}/p/${paste_id}#${fragment}`;
 
     // 5. save to history
-    await saveHistory({ paste_id, url, label, language, hard_delete_at, unlock_at });
+    await saveHistory({ paste_id, url, label, language, hard_delete_at, unlock_at, paste_password: password || null });
 
     // 6. show success
     showSuccess(url, hard_delete_at, unlock_at, burnVal);
